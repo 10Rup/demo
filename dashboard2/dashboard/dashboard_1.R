@@ -18,9 +18,14 @@ df <-read_excel(file)
 # nums <- names(select_if(df, is.numeric))
 # nums
 # hs <- "Location"
-# v1 <- df%>%group_by(hs)%>%
+# v1 <- df%>%group_by(Location)%>%
 #   summarise_at(vars(nums), list(sum))
 # v1
+
+df["Location"]
+v1 <- df%>%group_by(df["Location"])%>%summarise_at(vars(nums), list(sum))
+v1
+
 
 ui <-dashboardPage(
   dashboardHeader(),
@@ -39,6 +44,11 @@ ui <-dashboardPage(
         textOutput("x1_value")
       ),
       box(
+        title = "Table",
+        width = "9",
+        solidHeader = TRUE,
+        collapsible = TRUE,
+        collapsed = TRUE,
         tableOutput("table1")
        
       )
@@ -71,12 +81,12 @@ server <- function(input, output, session) {
   
   observeEvent(data_source(),{
     choices <- names(data_source()) 
-    updateSelectInput(inputId = "Colm", choices = c("All",choices))
+    updateSelectInput(inputId = "Colm", choices = c(choices))
   })
   
   observeEvent(data_source(),{
     choices <- names(select_if(data_source(), is.numeric))
-    updateSelectInput(inputId = "col2", choices = c("All",choices))
+    updateSelectInput(inputId = "col2", choices = c(choices))
   })
   
   output$x1_value<- renderText({
@@ -88,9 +98,11 @@ server <- function(input, output, session) {
     # req(input$Colm)
     # req(input$col2)
     
-    
-    df<- data_source()%>%group_by(input$Colm)%>%
-      summarise_at(vars(input$col2),list(sum))
+    # df%>%group_by(Location)%>%
+    #     summarise_at(vars(nums), list(sum))
+    df<- data_source()
+    df<-df%>%group_by(df[input$Colm])%>%
+    summarise_at(vars(input$col2),list(sum))
     df
   })
   
