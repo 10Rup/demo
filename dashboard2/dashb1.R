@@ -71,7 +71,7 @@ ui <-dashboardPage(
         title = "Bar Plot",
         plotlyOutput("plot1", width = "100%",#height = 300, width = 300,
         ),
-        textOutput("x_value")
+        textOutput("x_value") 
       ),
       box(
         title = "Dynamic Bar Plot",
