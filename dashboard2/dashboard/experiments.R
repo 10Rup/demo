@@ -1,4 +1,8 @@
 library(shiny)
+library(readxl)
+data <- read_xlsx(file.choose())
+data
+
 
 # ui <- fluidPage(
 #   numericInput("min", "Minimum", 0),

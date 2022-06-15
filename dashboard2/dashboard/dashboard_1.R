@@ -5,6 +5,7 @@ library(shiny)
 library(shinydashboard)
 library(readxl)
 library(dplyr)
+library(writexl)
 
 file <- "C:/RUPMANDAL/r project/shiny project/Shiny Practice/dashboard2/NIFT_Data.xlsx"
 df <-read_excel(file)
@@ -25,6 +26,8 @@ df <-read_excel(file)
 df["Location"]
 v1 <- df%>%group_by(df["Location"])%>%summarise_at(vars(nums), list(sum))
 v1
+view_folder_path<-"C:\\RUPMANDAL\\r project\\demo\\dashboard2\\dashboard\\views\\"
+
 
 
 ui <-dashboardPage(
@@ -38,10 +41,12 @@ ui <-dashboardPage(
         status = "success",
         collapsible = TRUE,
         collapsed = TRUE,
+        textInput("view_name", "VIEW NAME"),
         fileInput("file1","Choose cvs file", accept=".xlsx"),
         selectInput("Colm", label = "Group by", choices =NULL ),
         selectInput("col2", label = "Summarize", multiple = TRUE, choices =NULL ),
-        textOutput("x1_value")
+        # textOutput("x1_value")
+        actionButton("create", "Create View",class = "btn-primary btn-lg")
       ),
       box(
         title = "Table",
@@ -89,49 +94,49 @@ server <- function(input, output, session) {
     updateSelectInput(inputId = "col2", choices = c(choices))
   })
   
-  output$x1_value<- renderText({
-    input$col2
-  })
+  # output$x1_value<- renderText({
+    # input$col2
+  # })
   
   
-  output$table1<- renderTable({
-    # req(input$Colm)
-    # req(input$col2)
+  view_data<-reactive({
+    req(input$Colm)
+    req(input$col2)
     
     # df%>%group_by(Location)%>%
     #     summarise_at(vars(nums), list(sum))
     df<- data_source()
     df<-df%>%group_by(df[input$Colm])%>%
-    summarise_at(vars(input$col2),list(sum))
+      summarise_at(vars(input$col2),list(sum))
     df
   })
   
+  output$table1<- renderTable({
+    view_data()
+  })
   
-  
-  # col2_data<- reactive({
-  #   req(input$colms)
-  # })
+  observeEvent(input$create,{
+    req(view_data())
+   
+    df<- data.frame(input$view_name,input$Colm,input$col2)
+    colnames(df) <- c('view','groupby','cols')
+    df <- df%>%group_by(view)%>%
+      summarise(groupby=toString(sort(unique(input$Colm))),
+                cols = toString(sort(unique(input$col2))))
+            
+    write_xlsx(df,paste(view_folder_path,input$view_name,".xlsx",sep=""))
+  })
   # 
   
-  
-  output$text1 <- renderText({
-    file_name()
+  # output$text1 <- renderText({
+    # file_name()
     # file = input$file1
     # ext <- tools::file_ext(file$datapath)
     # file$datapath
     # file <- tools::file_path_as_absolute(file$datapath)
-  })
-  
-  # output$table1 <- renderTable({
-  #   file <- input$file1
-  #   ext <-tools::file_ext(file$datapath)
-  #   
-  #   req(file)
-  #   validate(need(ext == "xlsx", "upload a csv file"))
-  #   
-  #   read_excel(file$datapath)
-  #   
   # })
+  
+  
   
   
 }
