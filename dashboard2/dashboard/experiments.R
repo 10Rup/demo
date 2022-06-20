@@ -1,7 +1,68 @@
 library(shiny)
 library(readxl)
-data <- read_xlsx(file.choose())
+library(dplyr)
+library(tidyr)
+library(shinydashboard)
+library(openxlsx)
+# data <- read_xlsx(file.choose())
+# data
+# variable.names(data)
+# 
+# select_file <- function(){
+#   data <- read_xlsx(file.choose())
+#   data
+# }
+# 
+# select_file()
+
+data <-read_xlsx("C:/RUPMANDAL/r project/demo/dashboard2/dashboard/views/bbbb.xlsx")
 data
+
+# data_2<- data%>%
+  # mutate(cols = strsplit(as.character(cols),","))%>%
+  # unnest(cols)
+# data_2<- data%>% separate_rows(cols)
+data_2<- data%>%separate_rows(cols, sep = ", ", convert = TRUE)
+data_2
+
+
+# live_data<- read_xlsx("C:/RUPMANDAL/r project/shiny project/Shiny Practice/dashboard2/NIFT_Data.xlsx")
+# live_data
+
+# c<-data["groupby"]
+# group<-unique(data_2$groupby)
+# group
+# cols<-data_2$cols
+# typeof(cols)
+# cols
+# df <- live_data%>%group_by(live_data[c])%>%summarise_at(vars(cols), list(sum))
+# df
+view_name = "news"
+group_by = "names"
+columns = "x, y, sz"
+
+VIEW_PATH <-"C:/RUPMANDAL/r project/demo/dashboard2/dashboard/views/Views.xlsx"
+wb <- loadWorkbook(file = VIEW_PATH)
+wb
+view_df<-readWorkbook(VIEW_PATH)
+view_df
+new_id <- max(view_df$id)+1
+new_id
+
+df <- data.frame(new_id, view_name, group_by, columns)
+df
+writeData(wb,
+          "Sheet1",
+          df,
+          colNames = FALSE,
+          startRow = 1+nrow(view_df)+1)
+
+saveWorkbook(wb, file = VIEW_PATH, overwrite = TRUE)
+
+
+
+
+
 
 
 # ui <- fluidPage(
@@ -35,56 +96,96 @@ data
 # }
 
 
+# 
+# sales <- vroom::vroom("sales_data_sample.csv", col_types = list(), na = "")
+# sales %>% 
+#   select(TERRITORY, CUSTOMERNAME, ORDERNUMBER, everything()) %>%
+#   arrange(ORDERNUMBER)
 
-sales <- vroom::vroom("sales_data_sample.csv", col_types = list(), na = "")
-sales %>% 
-  select(TERRITORY, CUSTOMERNAME, ORDERNUMBER, everything()) %>%
-  arrange(ORDERNUMBER)
+
+
+# ui <- fluidPage(
+#   selectInput("territory", "Territory", choices = unique(sales$TERRITORY)),
+#   selectInput("customername", "Customer", choices = NULL),
+#   selectInput("ordernumber", "Order number", choices = NULL),
+#   tableOutput("data")
+# )
+# 
+# server <- function(input, output, session) {
+#   territory <- reactive({
+#     filter(sales, TERRITORY == input$territory)
+#   })
+#   observeEvent(territory(), {
+#     choices <- unique(territory()$CUSTOMERNAME)
+#     updateSelectInput(inputId = "customername", choices = choices) 
+#   })
+#   
+#   customer <- reactive({
+#     req(input$customername)
+#     filter(territory(), CUSTOMERNAME == input$customername)
+#   })
+#   observeEvent(customer(), {
+#     choices <- unique(customer()$ORDERNUMBER)
+#     updateSelectInput(inputId = "ordernumber", choices = choices)
+#   })
+#   
+#   output$data <- renderTable({
+#     req(input$ordernumber)
+#     customer() %>% 
+#       filter(ORDERNUMBER == input$ordernumber) %>% 
+#       select(QUANTITYORDERED, PRICEEACH, PRODUCTCODE)
+#   })
+# }
 
 
 
-ui <- fluidPage(
-  selectInput("territory", "Territory", choices = unique(sales$TERRITORY)),
-  selectInput("customername", "Customer", choices = NULL),
-  selectInput("ordernumber", "Order number", choices = NULL),
-  tableOutput("data")
+library(shiny)
+library(shinydashboard)
+
+ui <- dashboardPage(
+  
+  # title ----
+  dashboardHeader(title = "Test Application"),
+  
+  # sidebar ----
+  dashboardSidebar(
+    sidebarMenu(id = "sidebarid",
+                menuItem("Page 1", tabName = "page1"),
+                menuItem("Page 2", tabName = "page2"),
+                conditionalPanel(
+                  'input.sidebarid == "page2"',
+                  sliderInput("bins", "Number of bins:", min = 1, max = 50, value = 30),
+                  selectInput("title", "Select plot title:", choices = c("Hist of x", "Histogram of x"))
+                )
+    )
+  ),
+  
+  # body ----
+  dashboardBody(
+    tabItems(
+      # page 1 ----
+      tabItem(tabName = "page1", "Page 1 content. This page doesn't have any sidebar menu items."),
+      # page 2 ----
+      tabItem(tabName = "page2", 
+              "Page 2 content. This page has sidebar meny items that are used in the plot below.",
+              br(), br(),plotOutput("distPlot")
+              )
+    )
+  )
 )
 
+# server -----------------------------------------------------------------------
+
 server <- function(input, output, session) {
-  territory <- reactive({
-    filter(sales, TERRITORY == input$territory)
-  })
-  observeEvent(territory(), {
-    choices <- unique(territory()$CUSTOMERNAME)
-    updateSelectInput(inputId = "customername", choices = choices) 
+  
+  output$distPlot <- renderPlot({
+    x    <- faithful[, 2]
+    bins <- seq(min(x), max(x), length.out = input$bins + 1)
+    hist(x, breaks = bins, col = "darkgray", border = "white", main = input$title)
   })
   
-  customer <- reactive({
-    req(input$customername)
-    filter(territory(), CUSTOMERNAME == input$customername)
-  })
-  observeEvent(customer(), {
-    choices <- unique(customer()$ORDERNUMBER)
-    updateSelectInput(inputId = "ordernumber", choices = choices)
-  })
-  
-  output$data <- renderTable({
-    req(input$ordernumber)
-    customer() %>% 
-      filter(ORDERNUMBER == input$ordernumber) %>% 
-      select(QUANTITYORDERED, PRICEEACH, PRODUCTCODE)
-  })
 }
 
-
-
-
-
-
-
-
-
-
-
+# shiny app --------------------------------------------------------------------
 
 shinyApp(ui, server)
