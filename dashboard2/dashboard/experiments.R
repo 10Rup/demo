@@ -4,6 +4,16 @@ library(dplyr)
 library(tidyr)
 library(shinydashboard)
 library(openxlsx)
+
+file <- "C:/RUPMANDAL/r project/shiny project/Shiny Practice/dashboard2/NIFT_Data.xlsx"
+
+source("C:/RUPMANDAL/r project/demo/dashboard2/dashboard/views/create_view_page.R")
+
+
+
+demo_func("sdads")
+
+
 # data <- read_xlsx(file.choose())
 # data
 # variable.names(data)
@@ -37,18 +47,33 @@ data_2
 # cols
 # df <- live_data%>%group_by(live_data[c])%>%summarise_at(vars(cols), list(sum))
 # df
-view_name = "news"
-group_by = "names"
-columns = "x, y, sz"
 
+view_name = "me"
+group_by = "gp_me"
+columns = "sx, sy, ssz"
+VIEW_PATH <-"C:/RUPMANDAL/r project/demo/dashboard2/dashboard/views/Views.xlsx"
+df <- data.frame( view_name, group_by, columns)
+df
+cvp.append_func(VIEW_PATH,df)
+
+
+
+
+
+
+# # df$id<- new_id
+
+# new_id <-2
+# df
+
+# df_new <- cbind(new_id,df)
+# df_new
 VIEW_PATH <-"C:/RUPMANDAL/r project/demo/dashboard2/dashboard/views/Views.xlsx"
 wb <- loadWorkbook(file = VIEW_PATH)
 wb
 view_df<-readWorkbook(VIEW_PATH)
 view_df
 new_id <- max(view_df$id)+1
-new_id
-
 df <- data.frame(new_id, view_name, group_by, columns)
 df
 writeData(wb,
@@ -56,12 +81,21 @@ writeData(wb,
           df,
           colNames = FALSE,
           startRow = 1+nrow(view_df)+1)
-
 saveWorkbook(wb, file = VIEW_PATH, overwrite = TRUE)
 
-
-
-
+# append_func <- function(filepath,dataframe){
+#   library(openxlsx)
+#   wb <- loadWorkbook(file = VIEW_PATH)
+#   view_df<-readWorkbook(VIEW_PATH)
+#   id <- max(view_df$id)+1
+#   df<- cbind(id,dataframe)
+#   writeData(wb,"Sheet1",df,colNames = FALSE,startRow = 1+nrow(view_df)+1)
+#   saveWorkbook(wb, file = VIEW_PATH, overwrite = TRUE)
+#   return(paste("Updated"))
+#   # filepath
+# }
+# 
+# append_func(VIEW_PATH,df)
 
 
 

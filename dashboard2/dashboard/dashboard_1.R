@@ -60,11 +60,11 @@ ui <-dashboardPage(
             status = "success",
             collapsible = TRUE,
             collapsed = TRUE,
-            textInput("view_name", "VIEW NAME"),
+            textInput("view_name", "VIEW NAME"), textOutput("x1_value"),
             fileInput("file1","Choose cvs file", accept=".xlsx"),
             selectInput("Colm", label = "Group by", choices =NULL ),
             selectInput("col2", label = "Summarize", multiple = TRUE, choices =NULL ),
-            # textOutput("x1_value")
+            
             actionButton("create", "Create View",class = "btn-primary btn-lg")
           ),
           box(
@@ -120,10 +120,10 @@ server <- function(input, output, session) {
     updateSelectInput(inputId = "col2", choices = c(choices))
   })
   
-  # output$x1_value<- renderText({
-    # input$col2
-  # })
-  
+  output$x1_value<- renderText({
+  input$col2
+  })
+
   
   view_data<-reactive({
     req(input$Colm)
