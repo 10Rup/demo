@@ -9,6 +9,11 @@ file <- "C:/RUPMANDAL/r project/shiny project/Shiny Practice/dashboard2/NIFT_Dat
 
 source("C:/RUPMANDAL/r project/demo/dashboard2/dashboard/views/create_view_page.R")
 
+s<- c("a","b","c")
+s
+
+v<-toString(sort(unique(s)))
+v
 
 
 demo_func("sdads")

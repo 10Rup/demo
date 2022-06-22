@@ -1,5 +1,10 @@
 library(shiny)
 library(shinydashboard)
+library(readxl)
+library(dplyr)
+library(openxlsx)
+library(shinyjs)
+library(shinyalert)
 source("C:/RUPMANDAL/r project/demo/dashboard2/dashboard/views/create_view_page.R")
 source("C:/RUPMANDAL/r project/demo/dashboard2/dashboard/reactive_server.R")
 

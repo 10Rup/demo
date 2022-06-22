@@ -47,7 +47,9 @@ cvp.item1<-tabItem(
         selectInput("groupby", label = "Group by", choices =NULL ),
       ),
       box(
-        selectInput("Summarize", label = "Summarize", multiple = TRUE, choices =NULL ),
+        selectInput("summarize", label = "Summarize", multiple = TRUE, choices =NULL ),
+        useShinyjs(),
+        useShinyalert(),
       ),actionButton("create", "Create View",class = "btn-primary btn-lg")
     )
   )
