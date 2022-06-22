@@ -25,12 +25,12 @@ ui <-dashboardPage(
 # server <- function(input, output, session) {
   
 # }
-# server<-rs.server
-server<-function(input, output, session){
-  output$view_name<-renderText({
-    input$viewname
-  })
-}
+server<-rs.server
+# server <- function(input, output, session) {
+#   output$name <- renderText({
+#     paste0("Hello ", input$viewname, "!")
+#   })
+# }
 
 
 shinyApp(ui, server)

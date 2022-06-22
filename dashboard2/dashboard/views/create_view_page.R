@@ -37,17 +37,17 @@ cvp.item1<-tabItem(
       collapsed = TRUE,
       box(
         textInput("viewname", "VIEW NAME"),
-        textOutput("view_name")
+        textOutput("name")
       ),
       box(
-        fileInput("file1","Choose cvs file", accept=".xlsx"),
+        fileInput("reportfile","Choose cvs file", accept=".xlsx"),
         
       ),
       box(
-        selectInput("Colm", label = "Group by", choices =NULL ),
+        selectInput("groupby", label = "Group by", choices =NULL ),
       ),
       box(
-        selectInput("col2", label = "Summarize", multiple = TRUE, choices =NULL ),
+        selectInput("Summarize", label = "Summarize", multiple = TRUE, choices =NULL ),
       ),actionButton("create", "Create View",class = "btn-primary btn-lg")
     )
   )
@@ -94,8 +94,6 @@ cvp.body <-dashboardBody(
 # cvp.body2<-dashboardBody(
 #   
 # )
-
-
 
 
 # demo_func("rup")
