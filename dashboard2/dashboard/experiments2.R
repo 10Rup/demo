@@ -101,7 +101,7 @@ library(shinyalert)
 # listOfAnns
 # 
 # 
-identical(listOfAnns,'demo', ignore.bytecode=FALSE)
+# identical(listOfAnns,'demo', ignore.bytecode=FALSE)
 VIEW_PATH <-"C:/RUPMANDAL/r project/demo/dashboard2/dashboard/views/Views.xlsx"
 views<-readWorkbook(VIEW_PATH)
 views$view_name
@@ -114,24 +114,59 @@ views["view_name"]
 a<-c(unique(views$view_name))
 a
 "demo" %in% a
-indentical(a,"demo")
+identical(a,"demo")
 
 
+# ui <- fluidPage(
+#   checkboxGroupInput('in1', 'Check some letters', choices = head(LETTERS)),
+#   selectizeInput('in2', 'Select a state', choices = c("", state.name)),
+#   plotOutput('plot')
+# )
+# 
+# server <- function(input, output) {
+#   output$plot <- renderPlot({
+#     validate(
+#       need(input$in1, 'Check at least one letter!'),
+#       need(input$in2 != '', 'Please choose a state.')
+#     )
+#     plot(1:10, main = paste(c(input$in1, input$in2), collapse = ', '))
+#   })
+# }
+# 
+# shinyApp(ui, server)
+
+
+
+
+library(shiny)
 ui <- fluidPage(
-  checkboxGroupInput('in1', 'Check some letters', choices = head(LETTERS)),
-  selectizeInput('in2', 'Select a state', choices = c("", state.name)),
-  plotOutput('plot')
+  selectizeInput(
+    inputId = "select", 
+    label = "Select", 
+    choices = NULL,
+    multiple = FALSE,
+    options = list(
+      plugins = list("remove_button"),
+      create = TRUE,
+      persist = TRUE # keep created choices in dropdown
+    )
+  ),
+  verbatimTextOutput("out")
 )
 
-server <- function(input, output) {
-  output$plot <- renderPlot({
-    validate(
-      need(input$in1, 'Check at least one letter!'),
-      need(input$in2 != '', 'Please choose a state.')
-    )
-    plot(1:10, main = paste(c(input$in1, input$in2), collapse = ', '))
+server <- function(input, output){
+  output$out <- renderPrint({
+    input$select
   })
 }
 
 shinyApp(ui, server)
+
+
+
+
+
+
+
+
 

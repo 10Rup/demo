@@ -36,7 +36,13 @@ cvp.item1<-tabItem(
       collapsible = TRUE,
       collapsed = TRUE,
       box(
-        textInput("viewname", "VIEW NAME"),
+        # textInput("viewname", "VIEW NAME"),
+        selectizeInput("viewname", label = "VIEW NAME", choices =NULL,
+                       options = list(
+                         # plugins = list("remove_button"),
+                         create = TRUE,
+                         persist = TRUE # keep created choices in dropdown
+                       )),
         textOutput("name")
       ),
       box(

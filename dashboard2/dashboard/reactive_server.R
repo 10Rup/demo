@@ -3,33 +3,27 @@ VIEW_PATH <-"C:/RUPMANDAL/r project/demo/dashboard2/dashboard/views/Views.xlsx"
 
 # server codes
 rs.server<- function(input, output, session) {
-  output$name <- renderText({
+  # output$name <- renderText({
+  #   # views<-readWorkbook(VIEW_PATH)
+  #   # existing_views<-c(unique(views$view_name))
+  #   # validate(
+  #   # need(input$viewname %in% existing_views == FALSE,"Already Exists")
+  #   # )
+  #   paste0(input$viewname)
+  # })
+  
+  # observeEvent(input$viewname,{
+  #   views<-readWorkbook(VIEW_PATH)
+  #   existing_views<-c(unique(views$view_name))
+  #   req(input$viewname)
+  #   validate(need(input$viewname %in% existing_views == FALSE,shinyalert()))
     # views<-readWorkbook(VIEW_PATH)
     # existing_views<-c(unique(views$view_name))
     # validate(
-    # need(input$viewname %in% existing_views == FALSE,"Already Exists")
+    #   need(input$viewname %in% existing_views == TRUE,"Already Exists")
     # )
-    paste0(input$viewname)
-  })
-  
-  observeEvent(input$viewname,{
-    
-    req(input$viewname)
-    # validate(
-    #   need(input$viewname %in% existing_views == FALSE,
-    #        shinyalert(
-    #          "Already Exists!",
-    #          "",
-    #          type = "warning",
-    #          showConfirmButton = TRUE,))
-    # )
-    views<-readWorkbook(VIEW_PATH)
-    existing_views<-c(unique(views$view_name))
-    validate(
-      need(input$viewname %in% existing_views == FALSE,"Already Exists")
-    )
 
-  })
+  # })
   
   
   data_source<- reactive({
@@ -40,9 +34,19 @@ rs.server<- function(input, output, session) {
   })
   
   observeEvent(data_source(),{
+    views<-readWorkbook(VIEW_PATH)
+    existing_views<-c(unique(views$view_name))
+    # choices <- names(data_source()) 
+    updateSelectInput(inputId = "viewname", choices = c(existing_views))
+  })
+  
+  
+  observeEvent(data_source(),{
     choices <- names(data_source()) 
     updateSelectInput(inputId = "groupby", choices = c(choices))
   })
+  
+  
   
   observeEvent(data_source(),{
     choices <- names(select_if(data_source(), is.numeric))
@@ -79,14 +83,40 @@ rs.server<- function(input, output, session) {
   observeEvent(input$create,{
     # req(input$reportfile)
     req(input$viewname,input$reportfile)
+    views<-readWorkbook(VIEW_PATH)
+    existing_views<-c(unique(views$view_name))
+    # validate(need(input$viewname %in% existing_views,"Already Exists"))
     
-    cvp.append_func(VIEW_PATH,new_data())
-    shinyalert(
-      "Updated!",
-      "View Created", 
-      type = "success",
-      showConfirmButton = FALSE,)
+    if(input$viewname %in% existing_views){
+      shinyalert(
+          "Opps!",
+          "VIEW ALREADY EXISTS",
+          type = "warning",
+          showConfirmButton = TRUE,)
+    }else{
+      shinyalert(
+        "Done!",
+        "updated",
+        type = "success",
+        showConfirmButton = TRUE,)
+      cvp.append_func(VIEW_PATH,new_data())
+      
+    }
     
+    # cvp.append_func(VIEW_PATH,new_data())
+    # shinyalert(
+    #   "Updated!",
+    #   "View Created",
+    #   type = "success",
+    #   showConfirmButton = FALSE,)
+    
+  })
+  
+  observeEvent(input$create,{
+    views<-readWorkbook(VIEW_PATH)
+    existing_views<-c(unique(views$view_name))
+    # choices <- names(data_source()) 
+    updateSelectInput(inputId = "viewname", choices = c(existing_views))
   })
   
   # observeEvent({})
