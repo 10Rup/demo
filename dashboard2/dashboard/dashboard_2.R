@@ -5,10 +5,13 @@ library(dplyr)
 library(openxlsx)
 library(shinyjs)
 library(shinyalert)
-source("C:/RUPMANDAL/r project/demo/dashboard2/dashboard/views/create_view_page.R")
-source("C:/RUPMANDAL/r project/demo/dashboard2/dashboard/reactive_server.R")
+library(keypress)
+library(KeyboardSimulator)
+source("C:/RUPMANDAL/r project/demo/dashboard2/dashboard/views/server_dashboard.R")
+source("C:/RUPMANDAL/r project/demo/dashboard2/dashboard/views/ui_dashboard.R")
 
-
+getwd()
+setwd("C:/RUPMANDAL/r project/demo/dashboard2/dashboard/views")
 
 header <- dashboardHeader()
 sidebar <- dashboardSidebar(cvp.side_menu)
@@ -32,9 +35,7 @@ ui <-dashboardPage(
 # }
 server<-rs.server
 # server <- function(input, output, session) {
-#   output$name <- renderText({
-#     paste0("Hello ", input$viewname, "!")
-#   })
+# 
 # }
 
 
