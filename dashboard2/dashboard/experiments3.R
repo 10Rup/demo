@@ -77,3 +77,9 @@ readkey()
 # }
 
 shinyApp(ui, server)
+
+
+
+switch(menu(c("List letters", "List LETTERS")) + 1,
+       cat("Nothing done\n"), letters, LETTERS)
+
